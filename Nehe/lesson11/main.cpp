@@ -72,12 +72,9 @@ void resizeGLScene(int width, int height)
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 }
+const int MAXN = 45;
+glm::vec3 points[MAXN][MAXN];
 
-float lightAmbient[] = { 0.5f, 0.5f, 0.5f, 1.0f };
-float lightDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-float lightPosition[] = { 0.0f, 0.0f, 2.0f, 1.0f };
-
-const int STAR_NUMS = 50;
 
 float xrot, yrot, zrot;
 glm::vec3 position;
@@ -86,6 +83,7 @@ float speed;
 
 Sector sector;
 UINT glassTexture;
+UINT containerTexture;
 
 bool initGL()
 {
@@ -98,20 +96,32 @@ bool initGL()
 
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 
+	glPolygonMode(GL_FRONT, GL_FILL);
+	glPolygonMode(GL_BACK, GL_LINE);
+
 	/*glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 	glEnable(GL_BLEND);*/
 
 	srand(time(0));
-	/*glLightfv(GL_LIGHT1, GL_AMBIENT, lightAmbient);
-	glLightfv(GL_LIGHT1, GL_DIFFUSE, lightDiffuse);
-	glLightfv(GL_LIGHT1, GL_POSITION, lightPosition);
-	glEnable(GL_LIGHT1);*/
 
 	glassTexture = loadTexture("glass.png");
+	containerTexture = loadTexture("container2.png");
 	sector = Sector("vertexData.txt");
-	position = { 0, 0, 5 };
+	position = { 0, 0, 10 };
 	speed = 0.1f;
 	head = { 0, 0, -1 };
+
+	for (int i = 0; i < MAXN; i++)
+	{
+		for (int j = 0; j < MAXN; j++)
+		{
+			float x = i / 5.0f - 4.5f;
+			float y = j / 5.0f - 4.5f;
+			points[i][j].x = x;
+			points[i][j].y = y;
+			points[i][j].z = sin(glm::radians(i * 8.0f));
+		}
+	}
 
 	return true;
 }
@@ -138,7 +148,42 @@ bool drawGLScene()
 
 	glTranslatef(-position.x, -position.y, -position.z);
 	glBindTexture(GL_TEXTURE_2D, glassTexture);
-	sector.draw();
+	//sector.draw();
+
+	glBindTexture(GL_TEXTURE_2D, containerTexture);
+
+	glBegin(GL_QUADS);
+	for (int i = 0; i < MAXN - 1; i++)
+	{
+		for (int j = 0; j < MAXN - 1; j++)
+		{
+			float x1 = i / 44.0f, x2 = (i + 1) / 44.0f;
+			float y1 = j / 44.0f, y2 = (j + 1) / 44.0f;
+
+			glTexCoord2f(x1, y1);
+			glVertex3f(points[i][j].x, points[i][j].y, points[i][j].z);
+
+			glTexCoord2f(x1, y2);
+			glVertex3f(points[i][j + 1].x, points[i][j + 1].y, points[i][j + 1].z);
+
+			glTexCoord2f(x2, y2);
+			glVertex3f(points[i + 1][j + 1].x, points[i + 1][j + 1].y, points[i + 1][j + 1].z);
+
+			glTexCoord2f(x2, y1);
+			glVertex3f(points[i + 1][j].x, points[i + 1][j].y, points[i + 1][j].z);
+		}
+	}
+	glEnd();
+
+	for (int j = 0; j < MAXN; j++)
+	{
+		float tmp = points[0][j].z;
+		for (int i = 0; i < MAXN - 1; i++)
+		{
+			points[i][j].z = points[i + 1][j].z;
+		}
+		points[MAXN - 1][j].z = tmp;
+	}
 
 	return true;
 }
@@ -175,7 +220,7 @@ void processInput()
 	}
 	yrot = loopClamp(yrot, 0.0f, 360.0f);
 	float ra = glm::radians(yrot - 180);
-	head = { -sin(ra), 0, cos(ra) };
+	head = { -sin(ra), 0, cos(ra)};
 	if (keys['W'] || keys['w'])
 	{
 		position += speed * head;
