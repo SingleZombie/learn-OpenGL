@@ -10,3 +10,4 @@ A repository which records the code which I write to learn OpenGL.
 |-Nehe: The code I write when learning course of Nehe.  
 |-resource: The pictures I use in program. Some of pictures are downloaded from the course and some are drawn by me.  
 |-heads: Some head file and library the program requires.(I haven't upload all of them now)  
+|-practice: Some small program
