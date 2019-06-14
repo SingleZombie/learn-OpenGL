@@ -2,9 +2,9 @@
 
 A repository which records the code which I write to learn OpenGL.
 
-|------------------------|  
-\|-----File Hierarchy----|  
-\|------------------------|  
+|----------------------------------------------------------------|  
+\|-------------------------File Hierarchy------------------------|  
+\|----------------------------------------------------------------|  
 
 |-LearnOpenGLWebSite: The code I write when learning in https://learnopengl.com (Most of code is missed because I forgot to use github to save the code at first).  
 |-Nehe: The code I write when learning course of Nehe.  

@@ -190,9 +190,8 @@ bool initGL()
 
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 
-	cube.push_back(MyVertex::VertexProperty(cubePos, cubePosIndice, 24));
-	cube.push_back(MyVertex::VertexProperty(vertexColor, cubeColorIndice, 24));
-	cube.push_back(MyVertex::VertexProperty(texturePos, cubeTexCoord, 24, 2));
+	cube.setProperty(MyVertex::POSITION_INDEX, MyVertex::VertexProperty(cubePos, cubePosIndice, 24));
+	cube.setProperty(MyVertex::TEX_COORD2_INDEX, MyVertex::VertexProperty(texturePos, cubeTexCoord, 24, 2));
 
 	buildFont();
 
@@ -226,7 +225,7 @@ bool drawGLScene()
 	{
 		glBindTexture(GL_TEXTURE_2D, textureArr[i]);
 		glBegin(GL_QUADS);
-		MyVertex::drawVertex(cube, MyVertex::POSITION_BIT | MyVertex::TEX_COORD2_BIT, i * 4, 4);
+		cube.draw(MyVertex::POSITION_BIT | MyVertex::TEX_COORD2_BIT, i * 4, 4);
 		glEnd();
 	}
 	
@@ -237,16 +236,17 @@ void processInput()
 {
 	for (UINT i = 0; i < 256; i++)
 	{
-		if (keys[i] && !lastKeys[i])
+		if (keys[i] && !lastKeys[i]) // key down
 		{
 			lastKeys[i] = true;
 
 			switch (i)
 			{
+
 			}
 
 		}
-		else if (!keys[i] && lastKeys[i])
+		else if (!keys[i] && lastKeys[i]) // key up
 		{
 			lastKeys[i] = false;
 			switch (i)
@@ -255,6 +255,7 @@ void processInput()
 			}
 		}
 	}
+	// key press
 	if (keys['A'] || keys['a'])
 	{
 		yrot -= 0.1f;
